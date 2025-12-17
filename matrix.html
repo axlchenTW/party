@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>韓吉的 party</title>
+    <link rel="stylesheet" href="matrix.css">
+</head>
+<body>
+
+    <div id="app">
+        
+        <div id="header">
+            <div id="title">韓吉的 party</div>
+            <button id="randomizeButton">GO!</button>
+        </div>
+
+        <div id="mainContent">
+            
+            <div id="matrixContainer">
+                </div>
+            
+            <div id="thumbnailArea">
+                </div>
+            
+        </div>
+
+        <div id="modal">
+            <div id="modalContent">
+                <span class="close">&times;</span>
+                <div id="modalContentWrapper">
+                    <div class="spinner-modal" id="loadingSpinner"></div>
+                    <img id="modalImage" alt="抽獎結果">
+                    <div id="modalCaption"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loading-overlay">
+            <div class="loader-content">
+                <div class="spinner-main"></div>
+                <p>載入中...</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="image_data.js"></script> 
+    <script src="matrix.js"></script>
+</body>
+</html>

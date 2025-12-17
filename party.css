@@ -1,0 +1,401 @@
+/* party.css - 版本 v7.6 (搭配 Flexbox 居中) */
+
+/* ====================================
+   I. 全域設定與佈局
+   ==================================== */
+html {
+    /* 防止當捲軸消失時，內容往右偏移 */
+    overflow-y: scroll; 
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8; 
+    color: #333;
+    overflow-x: hidden; 
+}
+
+/* 修正：當 Modal 開啟時，隱藏 body 的捲軸 */
+.modal-open {
+    overflow: hidden; 
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%; 
+}
+
+/* ------------------------------------
+   II. 載入蓋版畫面樣式 
+   ------------------------------------ */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff; 
+    z-index: 9999; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s, visibility 0.5s; 
+}
+
+#loading-overlay.loaded {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+.loader-content {
+    text-align: center;
+    color: #333;
+}
+
+.spinner-main {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #d32f2f;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+/* ====================================
+   III. 標題區樣式 
+   ==================================== */
+#header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 8px 20px; 
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    position: sticky; 
+    top: 0;
+    z-index: 10;
+    
+    flex-wrap: nowrap;
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+#title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #d32f2f; 
+    letter-spacing: 1.5px;
+    white-space: nowrap; 
+    min-width: 0; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+#randomizeButton {
+    flex-shrink: 0; 
+    margin-left: 20px; 
+    padding: 12px 35px; 
+    font-size: 22px; 
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    border-radius: 6px; 
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+#randomizeButton:hover {
+    background-color: #388E3C;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#randomizeButton:active {
+    transform: scale(0.95);
+}
+
+#randomizeButton:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ====================================
+   IV. 縮圖區樣式 (Grid 佈局)
+   ==================================== */
+#thumbnailArea {
+    flex-grow: 1; 
+    padding: 20px;
+    box-sizing: border-box; 
+    width: 100%; 
+    display: grid;
+    grid-gap: 6px; 
+    justify-items: stretch; 
+    align-content: start;
+}
+
+.thumbnail-item {
+    position: relative;
+    aspect-ratio: 1 / 1; 
+    overflow: hidden;
+    border-radius: 6px;
+    border: none; 
+    box-shadow: none; 
+    cursor: pointer;
+    transition: transform 0.2s ease-out, box-shadow 0.2s, border 0.2s, opacity 0.3s; 
+}
+
+/* 懸停效果：放大和紅框 */
+.thumbnail-item:hover {
+    z-index: 5; 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.thumbnail-item:hover::after {
+    border-color: #D32F2F; 
+    box-shadow: 0 0 8px 3px rgba(255, 0, 0, 0.5); 
+    opacity: 1;
+}
+
+/* ------------------------------------
+   V. 已選中 (Drawn) 圖片標記 
+   ------------------------------------ */
+.thumbnail-item.drawn-item {
+    pointer-events: none; 
+    opacity: 0.6; 
+}
+
+.thumbnail-item.drawn-item:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.thumbnail-item.drawn-item:hover::after {
+    border-color: transparent;
+    box-shadow: none;
+    opacity: 0;
+}
+
+.thumbnail-item.drawn-item::before {
+    content: 'O'; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    
+    color: #D32F2F; 
+    font-size: 50px; 
+    font-weight: 900; 
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+/* ::after 偽元素作為紅框 */
+.thumbnail-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 6px;
+    
+    border: 4px solid transparent; 
+    box-shadow: 0 0 0 transparent; 
+    opacity: 0;
+    
+    transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s; 
+}
+
+/* 選中狀態 (Shuffling 結果) */
+.thumbnail-item.selected-item::after {
+    border-color: #D32F2F;
+    box-shadow: 0 0 8px 3px #FF0000;
+    opacity: 1;
+}
+
+.thumbnail-item.selected-item {
+    transition: none;
+    transform: none; 
+}
+
+
+.thumbnail-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    opacity: 0.0; 
+    transition: opacity 0.3s; 
+}
+
+.image-loaded {
+    opacity: 1.0 !important; 
+}
+
+.dimmed-image {
+    opacity: 0.3 !important;
+}
+
+/* 載入動畫樣式 (Modal 用) */
+#loadingSpinner {
+    display: none;
+}
+
+.spinner-modal {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #d32f2f;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ====================================
+   VI. Modal 大圖顯示 (V7.6 Flexbox 居中)
+   ==================================== */
+#modal {
+    display: none; 
+    position: fixed;
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    background-color: rgba(0,0,0,0.8); 
+    backdrop-filter: blur(5px); 
+    
+    /* Flexbox 居中 */
+    justify-content: center; 
+    align-items: center;
+    transition: background-color 0.3s; 
+}
+
+/* 初始 Modal 內容隱藏 */
+#modal.pre-transition {
+    background-color: transparent; 
+}
+
+
+/* ModalContent 僅作為轉場的錨點容器 */
+#modalContent {
+    padding: 0; 
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 95vh; 
+    width: fit-content; 
+    height: fit-content; 
+    position: relative; 
+    
+    transition: transform 0.5s ease-in-out, border-radius 0.5s ease-in-out; 
+    
+    /* 關鍵修正：確保 transform 變形以左上角為基準 */
+    transform-origin: top left;
+}
+
+
+/* 實際的白底和內容 Wrapper */
+#modalContentWrapper {
+    background-color: #fefefe;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    padding: 10px; 
+    border-radius: 12px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* 初始透明度為 0 */
+    opacity: 0; 
+    transition: opacity 0.3s 0.3s; 
+}
+
+/* 轉場完成後的狀態 */
+#modal.transition-done #modalContentWrapper {
+    opacity: 1;
+}
+
+
+/* Modal 圖片的樣式 */
+#modalImage {
+    display: block;
+    object-fit: contain; 
+    border-radius: 6px; 
+    width: auto; 
+    height: auto;
+    
+    transform-origin: top left;
+    transition: transform 0.5s ease-in-out, border-radius 0.5s ease-in-out;
+}
+
+#modal.transition-done #modalImage {
+    transition: none; 
+}
+
+/* 關閉按鈕和標題，轉場完成後才顯示 */
+#modalCaption, .close {
+    opacity: 0;
+    transition: opacity 0.3s 0.5s; 
+    z-index: 105; 
+}
+
+#modal.transition-done #modalCaption,
+#modal.transition-done .close {
+    opacity: 1;
+}
+
+#modalCaption {
+    margin-top: 10px; 
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    white-space: nowrap; 
+}
+
+/* 關閉按鈕 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    transition: color 0.2s;
+    z-index: 101; 
+}
+
+.close:hover,
+.close:focus {
+    color: #d32f2f;
+    text-decoration: none;
+    cursor: pointer;
+}

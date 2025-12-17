@@ -1,0 +1,270 @@
+/* matrix.css - 版本 Matrix V1.4 (動畫與抽獎邏輯分離後，視覺最終版) */
+
+/* ====================================
+   I. 全域設定與佈局
+   ==================================== */
+html {
+    overflow-y: scroll; 
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #000000; /* 全黑背景 */
+    color: #fefefe;
+    overflow: hidden; /* 隱藏捲軸，確保全屏流動 */
+}
+
+.modal-open {
+    overflow: hidden; 
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%; 
+    position: relative;
+}
+
+/* ------------------------------------
+   II. 載入蓋版畫面 
+   ------------------------------------ */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000; 
+    z-index: 9999; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s, visibility 0.5s; 
+}
+
+#loading-overlay.loaded {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.spinner-main {
+    border: 8px solid #333;
+    border-top: 8px solid #ffffff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ====================================
+   III. 標題區樣式 
+   ==================================== */
+#header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px 30px; 
+    background-color: rgba(0, 0, 0, 0.7); 
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+    position: sticky; 
+    top: 0;
+    z-index: 10;
+    color: white; 
+}
+
+#title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #00ff41; 
+    letter-spacing: 2px;
+}
+
+#randomizeButton {
+    padding: 15px 40px; 
+    font-size: 24px; 
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    border-radius: 6px; 
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5); 
+}
+
+#randomizeButton:hover {
+    background-color: #388E3C;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8); 
+}
+
+#randomizeButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ====================================
+   IV. Matrix 流動動畫區
+   ==================================== */
+#mainContent {
+    flex-grow: 1; 
+    position: relative;
+    overflow: hidden; 
+}
+
+#matrixContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+}
+
+/* 流動元素的基本樣式 */
+.floating-item {
+    position: absolute;
+    bottom: -400px; 
+    border-radius: 8px; 
+    overflow: hidden;
+    pointer-events: none;
+    
+    /* 視覺優化：新增細框和陰影 */
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.floating-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 流動動畫關鍵影格 */
+@keyframes flowUp {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        transform: translateY(calc(-100vh - 400px)) scale(0.9); 
+    }
+}
+
+
+/* ------------------------------------
+   V. 靜態區域 
+   ------------------------------------ */
+#thumbnailArea {
+    position: relative;
+    z-index: 5; 
+    width: 100%;
+    padding-top: 50px;
+    box-sizing: border-box;
+}
+
+
+/* ====================================
+   VI. Modal 大圖顯示 (結果揭曉)
+   ==================================== */
+
+#modal {
+    display: none; 
+    position: fixed;
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    background-color: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(8px); 
+    justify-content: center; 
+    align-items: center;
+}
+
+#modalContent {
+    padding: 0; 
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 95vh; 
+    width: fit-content; 
+    height: fit-content; 
+    position: relative; 
+    transition: opacity 0.3s;
+    transform-origin: top left;
+}
+
+
+#modalContentWrapper {
+    background-color: #fefefe;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+    padding: 10px; 
+    border-radius: 12px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+#modalImage {
+    display: block;
+    object-fit: contain; 
+    border-radius: 8px; 
+    width: auto; 
+    height: auto;
+    transform-origin: top left;
+}
+
+#modalCaption {
+    margin-top: 15px; 
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+    white-space: nowrap; 
+}
+
+/* 關閉按鈕和標題，在 Modal 內容出現後即可見 */
+#modalCaption, .close {
+    transition: opacity 0.3s 0.2s; 
+    z-index: 105; 
+}
+
+#modal.transition-done #modalCaption,
+#modal.transition-done .close {
+    opacity: 1;
+}
+
+.close {
+    color: #fefefe;
+    font-size: 32px;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    transition: color 0.2s;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    z-index: 9010; /* 🚨 確保比圖片高 */
+}
+
+.close:hover,
+.close:focus {
+    color: #ff0000;
+    text-decoration: none;
+    cursor: pointer;
+}

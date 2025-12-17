@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>韓吉的 party</title> 
+    <link rel="stylesheet" href="party.css">
+    <style>
+        #loading-overlay { display: flex; }
+        .spinner-main { display: block; }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loader-content">
+            <div class="spinner-main"></div>
+            <p>圖片載入中，請稍候...</p>
+        </div>
+    </div>
+    <div id="app">
+        <header id="header">
+            <h1 id="title">韓吉的 party</h1>
+            <button id="randomizeButton" disabled>GO!</button>
+        </header>
+        <div id="thumbnailArea"></div>
+        <div id="modal" class="pre-transition">
+            <div id="modalContent">
+                <div id="modalContentWrapper"> 
+                    <img id="modalImage" src="" alt="Randomly Selected Image">
+                    <p id="modalCaption"></p>
+                    <span class="close">&times;</span>
+                </div>
+                <div id="loadingSpinner" class="spinner-modal"></div>
+            </div>
+        </div>
+    </div>
+    <script src="image_data.js"></script>
+    <script src="party.js"></script>
+</body>
+</html>
