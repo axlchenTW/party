@@ -27,6 +27,9 @@ const modalContent = document.getElementById('modalContent');
 const modalImage = document.getElementById('modalImage');
 const modalCaption = document.getElementById('modalCaption');
 const closeButton = document.querySelector('.close');
+// --- 常數與變數 (新增音效控制) ---
+const shuffleSound = document.getElementById('shuffleSound');
+const winSound = document.getElementById('winSound');
 
 let availableIndices = []; 
 let totalImages = 0;
@@ -129,6 +132,12 @@ function updateAnimationSpeed(item, newDuration, isEaseOut = false) {
 // ----------------------------------------------------
 
 function displayRandomImage(finalIndex) { 
+// 🔊 播放開獎驚喜音 (鏘鏘！)
+    if (winSound) {
+        winSound.currentTime = 0;
+        winSound.play().catch(e => console.log("音效播放受阻，需使用者互動", e));
+    }
+        
     // 停止背景所有動作
     runningAnimations.forEach(item => { item.style.animationPlayState = 'paused'; });
 
@@ -164,30 +173,6 @@ function displayRandomImage(finalIndex) {
     };
 }
 
-function displayRandomImage1(finalIndex) { 
-    // 停止背景所有動作
-    runningAnimations.forEach(item => { item.style.animationPlayState = 'paused'; });
-
-    spinner.style.display = 'block';
-    const fileName = imageFiles[finalIndex];
-    modalImage.src = BASE_PATH + fileName; 
-    modalCaption.textContent = `恭喜中獎: ${fileName}`;
-    
-    modalImage.onload = function() {
-        spinner.style.display = 'none';
-        modal.style.display = 'flex';
-        // 🚨 確保關閉按鈕 z-index 夠高且可見
-        closeButton.style.display = 'block';
-        
-        document.body.classList.add('modal-open'); 
-        
-        const maxWidth = window.innerWidth * 0.9;
-        const maxHeight = window.innerHeight * 0.8; 
-        modalImage.style.maxWidth = `${maxWidth}px`;
-        modalImage.style.maxHeight = `${maxHeight}px`;
-    };
-}
-
 function handleCloseModal() {
     modal.style.display = 'none';
     document.body.classList.remove('modal-open'); 
@@ -205,6 +190,12 @@ function handleCloseModal() {
 function startShuffleAndReveal() {
     if (availableIndices.length === 0) return;
     
+    // 🔊 按下 GO，開始播放轉動音 (登登登...)
+    if (shuffleSound) {
+        shuffleSound.currentTime = 0;
+        shuffleSound.play().catch(e => console.log("音效播放受阻", e));
+    }
+
     isShuffling = true; 
     button.disabled = true;
     
@@ -217,6 +208,10 @@ function startShuffleAndReveal() {
     const finalIndex = availableIndices[luckyIdx]; 
     
     setTimeout(() => {
+
+        // 🔇 轉動加速時間結束，停止轉動音
+        if (shuffleSound) shuffleSound.pause();
+
         runningAnimations.forEach(item => {
             updateAnimationSpeed(item, STOP_DURATION, true);
         });
