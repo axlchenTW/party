@@ -146,7 +146,7 @@ function displayRandomImage(finalIndex) {
     modalImage.src = BASE_PATH + fileName; 
     
     // 🚨 關鍵：先把文字藏起來，並清空內容
-    modalCaption.textContent = "猜猜我是誰 ~~";
+    modalCaption.textContent = "猜猜他是誰？";
 //    modalCaption.style.opacity = "0"; 
 
     modalImage.onload = function() {
