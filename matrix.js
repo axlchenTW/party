@@ -10,9 +10,10 @@ const RESULT_HOLD_MS = 1500;
 
 const DENSITY_RATIO = 0.00004; 
 const MIN_THUMB_SIZE = 160;   
-const MAX_THUMB_SIZE = 360;  
-const IDLE_MIN_DURATION = 15000; 
-const IDLE_MAX_DURATION = 30000; 
+const MAX_THUMB_SIZE = 360;
+// 這兩個常數定義了圖片在畫面上流動的時間，時間越短，速度越快  
+const IDLE_MIN_DURATION = 8000; 
+const IDLE_MAX_DURATION = 24000; 
 
 const SHUFFLE_SPEED_FACTOR = 0.08; 
 const STOP_DURATION = 99999999; 
